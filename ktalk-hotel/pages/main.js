@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import NaivBar from '../component/shared/LaviBar';
+import NaivBar from '../component/common/LaviBar';
 import CallHistory from '../component/callHistory';
 
 class App extends Component {

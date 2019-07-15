@@ -5,17 +5,11 @@ class CallingHistory extends Component {
     
 
     render() {
-        return <CallHistory> </CallHistory>
+        return <CallHistory> 
+        </CallHistory>
 
     }
 }
 
-const mapStateToProps = status => {
-    history : status.history
-}
-
-const mapDispatchToProps = dispatch => {
-    loadHistories : () => dispatch(loadHistories())
-}
 
 export default CallingHistory
