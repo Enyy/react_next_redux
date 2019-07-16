@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import Link from 'next/link'
 
 class Login extends Component {
-    state = {
-        id : '',
-        password : '', 
-        isLoginChek : false
-    }
 
-    
     constructor(props) {
         super(props)
+        
+        this.state = {
+            id: '',
+            password: '',
+            isLoginChek: false
+        }
     }
 
     render() {

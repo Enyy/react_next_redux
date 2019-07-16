@@ -1,6 +1,7 @@
 import React  from 'react';
 import Link from 'next/link'
 
+
 const TopBar = prpos => {
     if (!prpos.currentUser) {
     return (
@@ -14,7 +15,7 @@ const TopBar = prpos => {
             </Link>
         </div>
         <div>
-            <labla > 내 아이디 명 </labla>
+                <label > 내 아이디 명 </label>
         </div>
         <div>
             <Link href="/">
@@ -32,7 +33,7 @@ const LoggedOutView = props => {
         return (
             <div className="nav-container">
                 <div>
-                    <Link href="/CallHistory">
+                    <Link href="/history">
                         <button> 통화 내역 </button>
                     </Link>
                 </div>
@@ -53,7 +54,7 @@ const LoggedOutView = props => {
 class NaivBar extends React.Component {
     render() {
         return (
-            <nav >
+            <nav>
                 <div> 
                     <TopBar   currentUser={this.props.currentUser}/> 
                     <LoggedOutView currentUser={this.props.currentUser} />
