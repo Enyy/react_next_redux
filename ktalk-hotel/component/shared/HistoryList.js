@@ -1,11 +1,11 @@
 import React, { Fragment } from 'react'
 const HistoryList = ({ items, displayMemo }) => {
-    console.log("items    ::: ", items )
+
     return (
         
         <Fragment>
             <tbody>
-                {   
+                {
                     items.map(item => (
                     <tr key={item.idx}>
                         <td>{item.idx}</td>
@@ -26,8 +26,8 @@ const HistoryList = ({ items, displayMemo }) => {
                             <button className="button call"> 통화 </button>
                         </td>
                     </tr>
-                
-                    ))}
+                    ))
+                }
             </tbody>
         </Fragment>
     )

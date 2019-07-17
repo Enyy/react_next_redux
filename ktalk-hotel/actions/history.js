@@ -1,22 +1,25 @@
 import { axiosInstance } from '../constants/axios'
+const cpId = 'ConsultingWeb'
+const auth_key = 'Q29uc3VsdGluZ1dlYl9ob3RlbA==';
+
 
 export const getCallHistory = async () => {
     let data = {
-        auth: { cpId: '1', auth_key: '1' },
+        auth: { cpId: cpId, auth_key: auth_key},
         groupName: 'all',
         searchType: 'room',
         listType: 'all',
-        keyword: '',
         option: {
             offset: 10 * 0,
             limit: 10,
-            sort: 'desc'
+            sort: 'desc', 
+            startTime : '20190709', 
+            endTime : '20190716'
         }
     }
+
     return await axiosInstance
-        .post('/call/getCallHistoryList', {
-            data
-        })
+        .post('/call/getCallHistoryList', data)
         .then(res => Promise.resolve(res.data))
         .catch(err => Promise.reject(err))
 }
@@ -24,7 +27,7 @@ export const getCallHistory = async () => {
 export const getManagementsByGroup = async group => {
     console.log('!!!', group)
     let data = {
-        auth: { cpId: '1', auth_key: '1' },
+        auth: { cpId: cpId, auth_key: auth_key },
         groupName: group.group,
         searchType: 'room',
         listType: '',
@@ -32,7 +35,9 @@ export const getManagementsByGroup = async group => {
         option: {
             offset: 10 * (group.active - 1),
             limit: 10,
-            sort: 'desc'
+            sort: 'desc',
+            startTime: '20190709',
+            endTime: '20190716'
         }
     }
 
@@ -47,12 +52,14 @@ export const getCurrencyBySort = async listType => {
     console.log("리스트 클릭!! " , listType);
 
         let data = {
-            auth: { cpId: '1', auth_key: '1' },
+            auth: { cpId: cpId, auth_key: auth_key },
             listType: listType.listType,
             option: {
                 offset: 10 * (listType.active - 1),
                 limit: 10,
-                sort: 'desc'
+                sort: 'desc',
+                startTime: '20190709',
+                endTime: '20190716'
             }
         }
 
@@ -63,17 +70,19 @@ export const getCurrencyBySort = async listType => {
         .catch(err => Promise.reject(err))
 }
 
-export const getSearchTypeList = async searchType => {
+export const getSearchResultList = async searchType => {
     console.log(" r ", searchType);
 
     let data = {
-        auth: { cpId: '1', auth_key: '1' },
+        auth: { cpId: cpId, auth_key: auth_key },
         searchType: searchType.searchType,
-        keyword: searchType.searchValue,
+        keyword: searchType.keyword,
         option: {
             offset: 10 * (searchType.active - 1),
             limit: 10,
-            sort: 'desc'
+            sort: 'desc',
+            startTime: '20190709',
+            endTime: '20190716'
         }
     }
 
@@ -95,7 +104,9 @@ export const getManagementsByPage = async page => {
         option: {
             offset: 10 * (page.active - 1),
             limit: 10,
-            sort: 'desc'
+            sort: 'desc',
+            startTime: '20190709',
+            endTime: '20190716'
         }
     }
     return await axiosInstance
@@ -114,7 +125,9 @@ export const getManagementsBySearch = async search => {
         option: {
             offset: 10 * (search.active - 1),
             limit: 10,
-            sort: 'desc'
+            sort: 'desc',
+            startTime: '20190709',
+            endTime: '20190716'
         }
     }
     return await axiosInstance

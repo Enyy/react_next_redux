@@ -1,14 +1,19 @@
 import React, { Component } from 'react'
-import ReactDom from 'react-dom'
 import HistoryList from '../../component/shared/HistoryList';
 import Memo from '../../component/shared/Memo';
-import { getCallHistory, getCurrencyBySort, historyByGroup } from '../../actions/history'
+import PagingBox from '../../component/shared/PagingBox';
+import { getCallHistory, getCurrencyBySort, getSearchResultList } from '../../actions/history'
 
 class History extends Component {
 
-    static async getInitialProps() {
+    static getInitialProps = async e => {
+        // const 
         try {
+            
             const history = await getCallHistory();
+
+            // 중복 되는 내용 처리 
+
             return {
                 history
             }
@@ -19,7 +24,6 @@ class History extends Component {
 
     constructor(props) {
         super(props);
-        this.modalWindow;
 
         this.state = {
             onMemo: false, // 메모창을 띄울지 bool
@@ -28,8 +32,11 @@ class History extends Component {
             total: this.props.history.total, //list item 총 수량
             dataPerPage: 10, // 페이지당 보여줄 수
             memo: '', // memo text 저장 state
-            option: '',
-            searchValue: '',
+            option: {
+                startTime : '',
+                endTime : ''
+            },
+            keyword: '',
             searchType : '',
             listType :'', // 통화 그룹 정렬
             groupName : '' // 부서 정렬 
@@ -38,27 +45,100 @@ class History extends Component {
 
     hendlerClick = e => {
         const memo_title = '통화 메모 '
-        this.modalWindow = window.open(' ', memo_title, 'width=420,height=250')
+        this.modalWindow = window.open(' ', memo_title, 'width=420,height=250');
+        this.setState({ onMemo: !this.state.onMemo, memo: memo })
     }
 
     displayMemo = memo => {
-        this.setState({ onMemo: !this.state.onMemo, memo: memo })
-    }
-    componentDidMount() {
+        console.log(memo);
         
-    
     }
 
 
-    // 새로운 팝업 창 생성
+    Refresh = () => {
+        alert(" 새로 고침 ");
+        const CalllType = document.getElementById("CalllType");
+        const DepartSort = document.getElementById("DepartSort");
+        const searchInput = document.getElementById("searchInput");
+        const searchType = document.getElementById("searchType");
+        const list = getCallHistory();
+        let index = 0;
 
-    // nextPage = pageNo => {
-    //     const { active, total, dataPerPage } = this.state
-    //     if (active + pageNo > total / dataPerPage) return this.setState({ active: total / dataPerPage })
-    //     this.setState({
-    //         active: active + pageNo
-    //     })
-    // }
+        if (CalllType.options[CalllType.selectedIndex].value !== 'all') {
+
+            CalllType.value = CalllType.options[index].value
+        } 
+    
+        if (DepartSort.options[DepartSort.selectedIndex].value !== 'all') {
+            DepartSort.value = DepartSort.options[index].value;
+        }
+        
+        if (searchType.options[searchType.selectedIndex].value !== 'rooms') {
+
+            searchType.value = searchType.options[index].value;
+            searchInput.placeholder = '객실번호 ex.0201';
+        }
+
+        if (searchInput.value !== '') {
+            searchInput.value = '';
+        }
+        
+        list.then(res => {
+
+            this.setState({
+                total: res.total,
+                items: res.result,
+                listType : '',
+                groupName : ''
+            })
+            
+        })
+        .catch(err => Promise.reject(err))
+
+    }
+
+    handleChangePage = async pageNo => {
+        const { searchValue, option } = this.state
+        let pageData = {
+            searchValue: searchValue,
+            option: option,
+            active: pageNo
+        }
+        try {
+            const res = await getCallHistory(pageData)
+            this.setState({
+                items: res.result,
+                total: res.result.length,
+                activePage: pageNo
+            })
+        } catch (err) {
+            console.log('handleChangePage err', err)
+        }
+    }
+
+    handlePage = pageNo => {
+        this.setState(
+            {
+                active: pageNo
+            }
+        )
+    }
+    
+    prevPage = pageNo => {
+        const { active } = this.state
+        if (active - pageNo < 1) return this.setState({ active: 1 })
+        this.setState({
+            active: active - pageNo
+        })
+    }
+
+    nextPage = pageNo => {
+        const { active, total, dataPerPage } = this.state
+        if (active + pageNo > total / dataPerPage) return this.setState({ active: total / dataPerPage })
+        this.setState({
+            active: active + pageNo
+        })
+    }
 
     historyByGroup = async e => {
         alert("historyByGroup", this.state);
@@ -108,24 +188,25 @@ class History extends Component {
 
     getSearchTypeByValue = async e => {
         try {
-            const { active, items } = this.state
+            const { active, searchType} = this.state
 
-            let searchType = searchInput.value
+            let searchWord = searchInput.value
+            console.log(" 검색 단어, " , searchWord)
             console.log("searchType   ", searchType);
 
-            if (searchType.length < 2) {
+            if (searchWord.length < 2) {
                 alert(" 2자 이상 입력해주세요.");
             } 
 
 
-            // let searchType = {
-            //     searchType: searchType,
-            //     active: active,
-            //     listType: listValue
-            // }
+            let searchData = {
+                searchType: searchType,
+                active: active, 
+                keyword: searchWord
+            }
 
-            // const _search = await getSearchTypeList(searchType)
-            // console.log('res:::::', _search)
+            const _search = await getSearchResultList(searchData)
+            console.log('res:::::', _search)
 
             // this.setState({
             //     total: _list_sort.total,
@@ -137,8 +218,6 @@ class History extends Component {
     }
 
     inputsearchType = e => {
-
-        const { searchType } = this.state
 
         searchType.addEventListener('click', () => {
 
@@ -155,10 +234,17 @@ class History extends Component {
                     break;
             }
 
-            return searchType.options[searchType.selectedIndex].value
+            return this.setState({
+                searchType : searchType.options[searchType.selectedIndex].value
+            });
         });
     }
 
+    Calendarcheck = e => {
+        const { startTime } = this.state.option
+        console.log(document.getElementById('today').value);
+        document.getElementById('today').value = new Date().toISOString().slice(11, 16);
+    }
 
 
     render() {
@@ -171,13 +257,13 @@ class History extends Component {
                     <div className="title"> 
                         <h2> 통화 내역 </h2>
                         <div className="title-line">
-                            <button>  새로 고침 </button>
+                            <button id="Refresh" onClick={this.Refresh} >  새로 고침 </button>
                         </div> 
                     </div>
                     <div className="content">
-                        <div clssName ="sideBar">
+                        <div className ="sideBar">
                             <label> 달력 </label>
-                            <input type="date" /> ~ <input type="date" />
+                            <input type="date" />  ~ <input type="date" id="today" />
                             <button> 조회</button>
 
                             <select 
@@ -196,20 +282,20 @@ class History extends Component {
                             <select 
                                 value={this.state.value}
                                 onChange={this.historyByGroup}
-                                className="sort" >
-                                <option value="all"> 부서 그룹 </option>
+                                className="sort"
+                                id="DepartSort">
+                                <option value="all" defaultValue> 부서 그룹 </option>
                                 <option value="FR"> 프론트(FR)</option>
                                 <option value="RV"> 예약문의(RV)</option>
                                 <option value="RS"> 룸서비스(RS)</option>
                                 <option value="HK"> 하우스키퍼(HK)</option>
                             </select>
-
-
                             <select
                                 value={this.state.value}
                                 onChange={this.getCurrencyBySort}
-                                className="callType">
-                                <option value="all"> 전체</option>
+                                className="callType"
+                                id="CalllType">
+                                <option value="all" defaultValue> 전체</option>
                                 <option value="out"> 발신 </option>
                                 <option value="in"> 수신</option>
                                 <option value="miss"> 부재중</option>
@@ -247,10 +333,18 @@ class History extends Component {
                                     onHistroy={bool}
                                     items={items}
                                     active={active}
-                                    displayMemo={this.displayMemo}
+                                    displayMemo={this.hendlerClick}
                                 />
                             </table>
                         </div>
+                        <PagingBox
+                            total={total}
+                            dataPerPage={10}
+                            activeProps={active}
+                            nextPage={this.nextPage}
+                            prevPage={this.prevPage}
+                            hanldePage={this.handlePage}
+                        />
                     </div>
                 </div>
                 {onMemo ? <Memo displayMemo={this.displayMemo} memo={memo} /> : ''}

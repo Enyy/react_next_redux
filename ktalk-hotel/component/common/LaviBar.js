@@ -2,8 +2,9 @@ import React  from 'react';
 import Link from 'next/link'
 
 
-const TopBar = prpos => {
-    if (!prpos.currentUser) {
+const TopBar = e => {
+
+
     return (
         <div>
         <Link href="/main">
@@ -19,17 +20,15 @@ const TopBar = prpos => {
         </div>
         <div>
             <Link href="/">
-                <button type="button"> 로그아웃 </button>
+                    <button type="button" > 로그아웃 </button>
             </Link>
         </div>
         </div>
     )
-    }
 
 }
 
 const LoggedOutView = props => {
-    if (!props.currentUser) {
         return (
             <div className="nav-container">
                 <div>
@@ -39,25 +38,28 @@ const LoggedOutView = props => {
                 </div>
 
                 <div>
-                    <Link href="/guestRoomList">
+                    <Link href="/gusetRoom">
                         <button> 객실 </button>
                     </Link>
                 </div>
             </div>
         )
-    }
-    return null;
 }
 
 
 
 class NaivBar extends React.Component {
+
+    logout = e => {
+        
+    }
+
     render() {
         return (
             <nav>
                 <div> 
-                    <TopBar   currentUser={this.props.currentUser}/> 
-                    <LoggedOutView currentUser={this.props.currentUser} />
+                    <TopBar /> 
+                    <LoggedOutView />
                 </div>
             </nav>
         );
