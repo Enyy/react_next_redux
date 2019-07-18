@@ -69,6 +69,8 @@ class PagingBox extends Component {
     render() {
         const { pageNo } = this.state
         const { nextPage, prevPage, handlePage, activeProps } = this.props
+        
+        console.log(pageNo);
 
         return (
             <div className="page">

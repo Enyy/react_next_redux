@@ -7,6 +7,7 @@ class Login extends Component {
         super(props)
         this.handlerIDChange = this.handlerIDChange.bind(this);
         this.handlerPwChange = this.handlerPwChange.bind(this);
+        
         this.state = {
             id: '',
             password: '',

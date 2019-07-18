@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Head from 'next/head'
 // import '../../style/main.css'
 
 class Meta extends Component {
@@ -9,9 +8,10 @@ class Meta extends Component {
 
     render() {
         return (
-            <Head>
+            <header> 
                 <title > Kt Hotel </title>
-            </Head>
+            </header>
+            
         )
     }
 }

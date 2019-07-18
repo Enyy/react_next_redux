@@ -1,4 +1,7 @@
 const Popup = ({ message, onCancel, onConfirm }) => {
+
+    
+    console.log("2222" , message);
     return (
         <div className="popupBox">
             <div className="popupBoxInner">

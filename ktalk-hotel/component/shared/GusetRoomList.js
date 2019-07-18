@@ -8,7 +8,7 @@ const RoomList = ({ items }) => {
                     
                         <div key={item.roomNumber}> {item.floor}
                         <div> {item.roomNumber}</div>
-                        <div> <button> 통화 </button> </div>
+                            <div> <button target={item.roomNumber}> 통화 </button> </div>
                     </div>
                     
                 ))}

@@ -1,8 +1,7 @@
 import React  from 'react';
 import Link from 'next/link'
 
-
-const TopBar = e => {
+const TopBar = props => {
 
 
     return (
@@ -11,7 +10,7 @@ const TopBar = e => {
             <a> 로고 이미지 </a>
         </Link>
         <div>
-            <Link href="/guestRoomList">
+            <Link href="/absensce">
                 <a > 부재중 아이콘 </a>
             </Link>
         </div>
@@ -48,24 +47,19 @@ const LoggedOutView = props => {
 
 
 
-class NaivBar extends React.Component {
-
-    logout = e => {
-        
-    }
+class NaviBar extends React.Component {
 
     render() {
         return (
-            <nav>
                 <div> 
                     <TopBar /> 
                     <LoggedOutView />
+                
                 </div>
-            </nav>
         );
     }
 }
 
 
 
-export default NaivBar
+export default NaviBar

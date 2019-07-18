@@ -1,48 +1,36 @@
 import React, { Component } from 'react'
-import HistoryList from '../../component/shared/HistoryList';
+import AbsensceList from '../../component/shared/AbsensceList';
 import Memo from '../../component/shared/Memo';
 import PagingBox from '../../component/shared/PagingBox';
-import { getCallHistory, getCurrencyBySort, 
-    getSearchResultList, 
-    getManagementsByGroup, 
-    getCalendarBySearch,
-    getTableHeaderBySort
-} from '../../actions/history'
+import { getMissedList  } from '../../actions/absensce';
+import { getCurrencyBySort, getSearchResultList, getCalendarBySearch, getTableHeaderBySort} from '../../actions/history'
 
-import { getMemoInfo } from '../../actions/Memo'
-
-class History extends Component {
+class Absensce extends Component {
 
     static getInitialProps = async e => {
-
         try {
-//  document.getElementById('today').value = today;
-            const history = await getCallHistory();
 
-            // 중복 되는 내용 처리 
-
+            const missList = await getMissedList();
+        
             return {
-                history
+                missList
             }
         } catch (error) {
-            console.log(`getCallHistory error `, error)
+            console.log(`getMissedList error `, error)
         }
     }
 
     constructor(props) {
         super(props);
-        console.log(props);
 
         this.state = {
             onMemo: false, // 메모창을 띄울지 bool
             active: 1, //선택 page
-            items: this.props.history.result, //list item 의 arr
-            total: this.props.history.total, //list item 총 수량
+            items: this.props.missList.result, //list item 의 arr
+            total: this.props.missList.total, //list item 총 수량
             dataPerPage: 10, // 페이지당 보여줄 수
             memo: '', // memo text 저장 state
             option: {
-                sortTime : '',
-                sort :'',
                 startTime: '',
                 endTime: ''
             },
@@ -53,47 +41,17 @@ class History extends Component {
         }
     }
 
-    hendlerClick = e => {
-        const memo_title = '통화 메모 '
-        const { onMemo } = this.state;
-
-        window.open('/popup', memo_title, 'width=420,height=250');
-
-    }
-
-    closeMemo = () => {
-        this.setState({ onMemo: !this.state.onMemo })
-    }
-
-    // 여기서 api 호출 후 메모에 데이터 넣으면 됨
-    displayMemo = async idx => {
-        try {
-            let res = await getMemoInfo(idx)
-            console.log('res', res)
-            this.setState({ onMemo: !this.state.onMemo, memo: res.data.memo })
-
-
-        } catch (err) {
-            console.log('err', err)
-        }
-    }
-
-
-
     Refresh = async () => {
         alert(" 새로 고침 ");
         const CallType = document.getElementById("CallType");
         const DepartSort = document.getElementById("DepartSort");
         const searchInput = document.getElementById("searchInput");
         const searchType = document.getElementById("searchType");
-        // const prevDate = document.getElementById('prevDate').value.split('-');
-
-        // 새로고침 했을 때, 날짜 현재 날짜로 변경 해야함 
-
-        const list = await getCallHistory();
+        const list = await getMissedList();
         let index = 0;
 
-        if (CallType.options[CallType.selectedIndex].value !== 'all') {
+        if (CallType.options[CallType.selectedIndex].value !== 'miss') {
+            index= 3
             CallType.value = CallType.options[index].value
         }
 
@@ -141,6 +99,31 @@ class History extends Component {
 
     }
 
+    hendlerClick = e => {
+        const memo_title = '통화 메모 '
+        const popup = window.open('/popup', memo_title, 'width=420,height=250');
+
+    }
+
+    closeMemo = () => {
+        this.setState({ onMemo: !this.state.onMemo })
+    }
+
+    // 여기서 api 호출 후 메모에 데이터 넣으면 됨
+    displayMemo = async idx => {
+        try {
+            let res = await getMemoInfo(idx)
+            console.log('res', res)
+            this.setState({ onMemo: !this.state.onMemo, memo: res.data.memo })
+
+
+        } catch (err) {
+            console.log('err', err)
+        }
+    }
+
+
+
     handleChangePage = async pageNo => {
         const { searchValue, option } = this.state
         let pageData = {
@@ -149,7 +132,7 @@ class History extends Component {
             active: pageNo
         }
         try {
-            const res = await getCallHistory(pageData)
+            const res = await getMissedList(pageData)
             this.setState({
                 items: res.result,
                 total: res.result.length,
@@ -160,21 +143,13 @@ class History extends Component {
         }
     }
 
-
     handlePage = pageNo => {
-        
-        console.log("1 #### " , pageNo);
-
         this.setState(
             {
                 active: pageNo
-            },
-            () => {
-                this.handleChangePage(this.state.active)
             }
         )
     }
-
 
     prevPage = pageNo => {
         const { active } = this.state
@@ -192,31 +167,9 @@ class History extends Component {
         })
     }
 
-    historyByGroup = async e => {
-        try {
-            const { active } = this.state
-            console.log(this.state);
-            console.log(" groupName ##############", e.target.value);
-            let groupName = e.value.target
-
-            alert("부서그룹 " , groupName);
-
-            let groupData = {
-                active: active,
-                group: groupValue
-            }
-            // console.log('groupData', groupData)
-            const res = await getManagementsByGroup(groupData)
-
-            console.log('res:::::', res)
-        } catch (err) {
-            // console.log("error", err);
-        }
-    }
-
     getCurrencyBySort = async e => {
         try {
-            const { active , option} = this.state
+            const { active, option } = this.state
 
             let listValue = e.target.value
             const prevDate = document.getElementById('prevDate').value.split('-');
@@ -225,12 +178,12 @@ class History extends Component {
             const today = document.getElementById('today').value.split('-');
             const todays = today[0] + today[1] + today[2];
 
-            console.log("3. getCurrencyBySort --> " , option);
+            console.log("3. getCurrencyBySort --> ", option);
             let ListData = {
                 active: active,
-                listType: listValue, 
-                option : {
-                    startTime: prevDates, 
+                listType: listValue,
+                option: {
+                    startTime: prevDates,
                     endTime: todays
                 }
 
@@ -240,8 +193,8 @@ class History extends Component {
             console.log('res:::::', _list_sort)
 
             this.setState({
-                option : {
-                    startTime: prevDates, 
+                option: {
+                    startTime: prevDates,
                     endTime: todays
                 },
                 total: _list_sort.total,
@@ -255,7 +208,7 @@ class History extends Component {
 
     getSearchTypeByValue = async e => {
         try {
-            const { active, searchType , option } = this.state
+            const { active, searchType, option } = this.state
 
             let searchWord = searchInput.value.trim()
             console.log("option", option);
@@ -276,8 +229,8 @@ class History extends Component {
             let searchData = {
                 searchType: searchType,
                 active: active,
-                keyword: searchWord, 
-                option : {
+                keyword: searchWord,
+                option: {
                     startTime: prevDates,
                     endTime: todays
                 }
@@ -311,7 +264,7 @@ class History extends Component {
                     // 검색 
                     break;
                 default:
-                    
+
                     break;
             }
 
@@ -323,7 +276,7 @@ class History extends Component {
 
     Calendarcheck = async e => {
         try {
-            const { active  } = this.state
+            const { active } = this.state
 
             const today = document.getElementById('today').value.split('-');
             const todays = today[0] + today[1] + today[2];
@@ -332,11 +285,11 @@ class History extends Component {
             const prevDates = prevDate[0] + prevDate[1] + prevDate[2];
 
             let CalendarData = {
-                option : {
+                option: {
                     startTime: prevDates,
                     endTime: todays
-                }, 
-                active : active
+                },
+                active: active
             }
 
             const _dateSearch = await getCalendarBySearch(CalendarData)
@@ -345,7 +298,7 @@ class History extends Component {
                 option: {
                     startTime: prevDates,
                     endTime: todays
-                }, 
+                },
                 total: _dateSearch.total,
                 items: _dateSearch.result
             })
@@ -365,18 +318,18 @@ class History extends Component {
         let sortdata;
         try {
 
-            
+
             const { active } = this.state;
 
             // if (sortflag) {
-                sortdata = {
-                    active: active,
-                    option: {
-                        sortType: 'roomNumber',
-                        sort: 'desc'
-                    }
+            sortdata = {
+                active: active,
+                option: {
+                    sortType: 'roomNumber',
+                    sort: 'desc'
                 }
-                //sortflag =false;
+            }
+            //sortflag =false;
             // } 
 
             // if (!sortflag)  {
@@ -398,9 +351,11 @@ class History extends Component {
             console.log(`guestRoomSort ${error}`);
         }
     }
-    render() {
 
-        const { onMemo, active, total, items, memo, searchType } = this.state
+    render() {
+        const { onMemo, active, total, items, memo, error } = this.state
+        const bool = true
+
         const date = new Date();
         const day = date.getDate();
         const month = date.getMonth() + 1;
@@ -416,7 +371,7 @@ class History extends Component {
         }
 
         const today = year + "-" + monthc + "-" + days;
-        const prevDate = year + "-" + monthc + "-" + (days -7);
+        const prevDate = year + "-" + monthc + "-" + (days - 7);
 
 
         return (
@@ -432,7 +387,7 @@ class History extends Component {
                     <div className="content">
                         <div className="sideBar">
                             <label> 달력 </label>
-                            <input type="date" id="prevDate" onChange={this.state.value} defaultValue={prevDate} />  ~ <input type="date" id="today" onChange={this.state.value} defaultValue={today}/>
+                            <input type="date" id="prevDate" onChange={this.state.value} defaultValue={prevDate} />  ~ <input type="date" id="today" onChange={this.state.value} defaultValue={today} />
                             <button onClick={this.Calendarcheck}> 조회</button>
 
                             <select
@@ -440,7 +395,7 @@ class History extends Component {
                                 value={this.state.value}
                                 onChange={this.inputsearchType}
                                 name="searchType" id="searchType">
-                                <option value="room" > 객실</option>
+                                <option value="room"> 객실</option>
                                 <option value="user"> 상담사</option>
                             </select>
 
@@ -450,28 +405,27 @@ class History extends Component {
                         </div>
                         <div className="search input">
                             <select
-                                defaultValue="all"
                                 value={this.state.value}
                                 onChange={this.historyByGroup}
                                 className="sort"
                                 id="DepartSort">
-                                <option value="all" > 부서 그룹 </option>
+                                <option value="all" defaultValue> 부서 그룹 </option>
                                 <option value="FR"> 프론트(FR)</option>
                                 <option value="RV"> 예약문의(RV)</option>
                                 <option value="RS"> 룸서비스(RS)</option>
                                 <option value="HK"> 하우스키퍼(HK)</option>
-                                <option value="PG"> 부재중 그룹 </option>
+                                <option > 부재중 그룹 </option>
                             </select>
                             <select
-                                defaultValue="all"
-                                value={this.state.value}
+                                defaultValue="miss"
+                                value = {this.state.value}
                                 onChange={this.getCurrencyBySort}
                                 className="callType"
                                 id="CallType">
                                 <option value="all" > 전체</option>
                                 <option value="out"> 발신 </option>
                                 <option value="in"> 수신</option>
-                                <option value="miss"> 부재중</option>
+                                <option value="miss" > 부재중</option>
                             </select>
                             <br></br>
 
@@ -493,7 +447,7 @@ class History extends Component {
                                     <tr>
                                         <th>NO .</th>
                                         <th>착/발신 시간</th>
-                                        <th onClick={this.guestRoomSort}>객실</th>
+                                        <th>객실</th>
                                         <th>요청부서</th>
                                         <th>처리부서</th>
                                         <th>상담사ID</th>
@@ -502,7 +456,8 @@ class History extends Component {
                                         <th>통화</th>
                                     </tr>
                                 </thead>
-                                <HistoryList
+                                <AbsensceList
+                                    onHistroy={bool}
                                     items={items}
                                     active={active}
                                     displayMemo={this.hendlerClick}
@@ -519,9 +474,10 @@ class History extends Component {
                         />
                     </div>
                 </div>
+                {onMemo ? <Memo displayMemo={this.displayMemo} memo={memo} /> : ''}
             </div>
         )
     }
 }
 
-export default History
+export default Absensce

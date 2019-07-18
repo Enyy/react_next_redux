@@ -1,11 +1,12 @@
 import React, { Fragment } from 'react'
 const HistoryList = ({ items, displayMemo }) => {
-
+    console.log("너는 누구냐", items);
     return (
         
         <Fragment>
             <tbody>
                 {
+
                     items.map(item => (
                     <tr key={item.idx}>
                         <td>{item.idx}</td>
@@ -16,11 +17,16 @@ const HistoryList = ({ items, displayMemo }) => {
                         <td>{item.receiver}</td>
                         <td>{item.call_time}</td>
                         <td>
-                            <button
-                                onClick={ () => displayMemo(item.memo)}
-                            >
-                                메모장
-                            </button>
+                                {item.memo ? (
+                                    <button
+                                        onClick={() => displayMemo(item.idx)}
+                                        className="waves-effect waves-light delete"
+                                    >
+                                        메모 확인
+                                </button>
+                                ) : (
+                                        ''
+                                    )}
                         </td>
                         <td>
                             <button className="button call"> 통화 </button>

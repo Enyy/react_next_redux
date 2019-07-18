@@ -1,14 +1,12 @@
 import React, { Component } from 'react'
-import NaivBar from '../../component/common/LaviBar';
-import Meta from '../../component/common/Meta'
+import NaviBar from '../../component/common/NaviBar';
 
 class App extends Component {
+
     render() {
         return (
-            <div>
-                <Meta />
-                <NaivBar />
-                {this.props.children}
+            <div> 
+                <NaviBar />
             </div>
         );
     }

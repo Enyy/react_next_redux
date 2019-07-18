@@ -29,3 +29,15 @@ export const getGuestRoomSearch = async (search) => {
         .post('/room/getGuestRoomList', data)
         .then(res => Promise.resolve(res.data)).catch(err => Promise.reject(err))
 }
+
+export const getGuestRoomFloorSort = async (Floor) => {
+    console.log(Floor)
+
+    let data = {
+        auth: { cpId: cpId, auth_key: auth_key },
+        listType: Floor.listType
+    }
+
+    return await axiosInstance.post('/room/getGuestRoomList', data)
+        .then(res => Promise.resolve(res.data)).catch(err => Promise.reject(err))
+}

@@ -3,6 +3,9 @@ import Link from 'next/link'
 
 class LoginForm extends Component {
 
+    static getInitialState() {
+
+    }
 
 
 }
