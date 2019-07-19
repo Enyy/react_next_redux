@@ -1,12 +1,10 @@
 import React, { Fragment } from 'react'
 const HistoryList = ({ items, displayMemo }) => {
-    console.log("너는 누구냐", items);
     return (
         
         <Fragment>
             <tbody>
                 {
-
                     items.map(item => (
                     <tr key={item.idx}>
                         <td>{item.idx}</td>

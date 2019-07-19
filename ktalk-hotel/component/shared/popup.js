@@ -1,8 +1,10 @@
 const Popup = ({ message, onCancel, onConfirm }) => {
 
-    
-    console.log("2222" , message);
+    console.log("2222", message);
     return (
+        // onMemo?<Memo closeMemo = {this.closeMemo } memo = { memo } /> : ''
+
+
         <div className="popupBox">
             <div className="popupBoxInner">
                 <h1 className="popupTitle">{message}</h1>

@@ -2,12 +2,14 @@ import React, { Component} from 'react'
 import Link from 'next/link'
 
 class LoginForm extends Component {
-
-    static getInitialState() {
-
+    render() {
+        return (
+            <div>
+                Auth (사용자 인증)
+            </div>
+        )
     }
-
-
 }
+
 
 export default LoginForm

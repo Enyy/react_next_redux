@@ -1,4 +1,4 @@
-import { axiosInstance } from '../constants/axios'
+import { axiosInstance, handleSuccess, handleError } from '../constants/axios'
 const cpId = 'ConsultingWeb'
 const auth_key = 'Q29uc3VsdGluZ1dlYl9ob3RlbA==';
 
@@ -11,7 +11,8 @@ export const getGuestRoomList = async () => {
 
     return await axiosInstance
             .post('/room/getGuestRoomList' , data)
-        .then(res => Promise.resolve(res.data)).catch(err => Promise.reject(err))
+        .then(handleSuccess)
+        .catch(handleError)
 }
 
 
@@ -27,8 +28,8 @@ export const getGuestRoomSearch = async (search) => {
 
     return await axiosInstance
         .post('/room/getGuestRoomList', data)
-        .then(res => Promise.resolve(res.data)).catch(err => Promise.reject(err))
-}
+        .then(handleSuccess)
+        .catch(handleError)
 
 export const getGuestRoomFloorSort = async (Floor) => {
     console.log(Floor)
@@ -39,5 +40,6 @@ export const getGuestRoomFloorSort = async (Floor) => {
     }
 
     return await axiosInstance.post('/room/getGuestRoomList', data)
-        .then(res => Promise.resolve(res.data)).catch(err => Promise.reject(err))
+        .then(handleSuccess)
+        .catch(handleError)
 }

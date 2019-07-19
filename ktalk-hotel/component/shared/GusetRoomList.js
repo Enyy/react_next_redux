@@ -1,5 +1,8 @@
 import React, { Fragment } from 'react'
 const RoomList = ({ items }) => {
+
+    // arr: arr.filter((item, i) => i !== index)
+
     return (
         <Fragment>
             <div>

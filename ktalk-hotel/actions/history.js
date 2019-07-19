@@ -1,4 +1,4 @@
-import { axiosInstance } from '../constants/axios'
+import { axiosInstance, handleError, handleSuccess } from '../constants/axios'
 const cpId = 'ConsultingWeb'
 const auth_key = 'Q29uc3VsdGluZ1dlYl9ob3RlbA==';
 const date = new Date();
@@ -16,10 +16,10 @@ if (day < 10) {
 }
         const today = year + "-" + monthc + "-" + days;
 export const getCallHistory = async () => {
-
-
-    console.log(today);
     
+    console.log(today);
+
+
     let data = {
         auth: { cpId: cpId, auth_key: auth_key},
         groupName: 'all',
@@ -33,8 +33,8 @@ export const getCallHistory = async () => {
     }
     return await axiosInstance
         .post('/call/getCallHistoryList', data)
-        .then(res => Promise.resolve(res.data))
-        .catch(err => Promise.reject(err))
+        .then(handleSuccess)
+        .catch(handleError)
 }
 
 export const getManagementsByGroup = async group => {
@@ -55,8 +55,8 @@ export const getManagementsByGroup = async group => {
     console.log('data?', data)
     return await axiosInstance
         .post('/call/getCallHistoryList', data)
-        .then(res => res.data)
-        .catch(err => Promise.reject(err))
+        .then(handleSuccess)
+        .catch(handleError)
 }
 
 export const getCurrencyBySort = async listType => {
@@ -77,8 +77,8 @@ export const getCurrencyBySort = async listType => {
     console.log("  정렬하자자자자자자자자  ", data)
     return await axiosInstance
         .post('/call/getCallHistoryList', data)
-        .then(res => res.data)
-        .catch(err => Promise.reject(err))
+        .then(handleSuccess)
+        .catch(handleError)
 }
 
 export const getSearchResultList = async searchType => {
@@ -116,8 +116,8 @@ export const getSearchResultList = async searchType => {
     console.log("  검색!!! 결과!   ", data)
     return await axiosInstance
         .post('/call/getCallHistoryList', data)
-        .then(res => res.data)
-        .catch(err => Promise.reject(err))
+        .then(handleSuccess)
+        .catch(handleError)
 }
 
 export const getManagementsBySort = async search => {
@@ -135,8 +135,8 @@ export const getManagementsBySort = async search => {
     }
     return await axiosInstance
         .post('/call/getCallHistoryList', data)
-        .then(res => res.data)
-        .catch(err => Promise.reject(err))
+        .then(handleSuccess)
+        .catch(handleError)
 }
 
 export const getCalendarBySearch = async _data => {
@@ -154,15 +154,13 @@ export const getCalendarBySearch = async _data => {
         }
     }
 
-    console.log("2" , data);
     return await axiosInstance
         .post('/call/getCallHistoryList', data)
-        .then(res => res.data)
-        .catch(err => Promise.reject(err))
+        .then(handleSuccess)
+        .catch(handleError)
 }
 
 export const getTableHeaderBySort = async sortType => {
-    console.log("리스트 클릭!! ", sortType);
 
     let data = {
         auth: { cpId: cpId, auth_key: auth_key },
@@ -174,9 +172,8 @@ export const getTableHeaderBySort = async sortType => {
         }
     }
 
-    console.log("  정렬하자자자자자자자자  ", data)
     return await axiosInstance
         .post('/call/getCallHistoryList', data)
-        .then(res => res.data)
-        .catch(err => Promise.reject(err))
+        .then(handleSuccess)
+        .catch(handleError)
 }
