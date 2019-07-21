@@ -2,8 +2,7 @@ import React  from 'react';
 import Link from 'next/link'
 
 const TopBar = props => {
-
-
+    
     return (
         <div>
         <Link href="/main">
@@ -16,6 +15,7 @@ const TopBar = props => {
         </div>
         <div>
                 <label > 내 아이디 명 </label>
+                
         </div>
         <div>
             <Link href="/">
