@@ -3,14 +3,13 @@ import Link from 'next/link'
 
 class Login extends Component {
 
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            id: '',
-            password: ''
-        }
+    
+    state = {
+        id: '',
+        password: '',
+        checked: ''
     }
+
 
     handleSubmit = (e) => {
 
@@ -63,21 +62,15 @@ class Login extends Component {
            //alert("a");
             console.log(this.state.isLoggin);
 
-            this.setState({ 
+            setState({ 
                 id: this.state.id,
                 password: authPw,
-                checked:  window.localStorage.getItem("checked"), 
-                isLoggin : true
+                checked:  window.localStorage.getItem("checked")
             });
 
-            console.log(window.localStorage.getItem("checked"))
-            console.log("isLoggin Check" , this.state.isLoggin);
+            console.log("checked Check" , this.state.checked);
         
         }
-
-        console.log("isLoggin Checkt" , this.state.isLoggin);
-
-
         
     }
 
@@ -86,26 +79,16 @@ class Login extends Component {
 
         console.log("1", checked);
 
+        this.setState({ checked: true });
+
         if (checked) {
-            // this.setState({ checked: true });
             window.localStorage.setItem("checked", true);
             console.log("12", checked);
-            return {
-                checked : this.state.checked
-            }
         } else if (!checked) {
             console.log("13", checked);
             this.setState({ checked: false });
             window.localStorage.setItem("checked", false)
-
-            return {
-                checked : this.state.checked
-            }
         }
-
-        console.log("11111 ", this.state.checked);
-
-       
 
     };
 
@@ -123,8 +106,8 @@ class Login extends Component {
 
     render() {
 
-        const  {isLoggin }  = this.state
-        console.log("isLogin ::: " , isLoggin)
+        const  {isLoggin , checked }  = this.state
+        console.log("checked ::: " , checked)
 
         return (
             <form >
@@ -147,6 +130,7 @@ class Login extends Component {
                 <input className="input"
                     id="checkId"
                     type="checkbox"
+                    checked={this.state.checked}
                     onChange={this.handleChange}
                     
                 />                 <label className="sr-only" id="sr-only"> 아이디 저장 </label>

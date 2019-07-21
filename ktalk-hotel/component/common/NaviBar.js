@@ -2,7 +2,16 @@ import React  from 'react';
 import Link from 'next/link'
 
 const TopBar = props => {
-    
+  
+    const loggout = e => {
+        const loggout = document.getElementById('dd');
+
+        alert('loggout');
+        if (window.localStorage.getItem('checked')) {
+            console.log(window.localStorage.getItem('checked'))
+        }
+    }
+
     return (
         <div>
         <Link href="/main">
@@ -19,7 +28,7 @@ const TopBar = props => {
         </div>
         <div>
             <Link href="/">
-                    <button type="button" > 로그아웃 </button>
+                    <button id ="dd" type="button" onClick={loggout}> 로그아웃 </button>
             </Link>
         </div>
         </div>
@@ -48,6 +57,7 @@ const LoggedOutView = props => {
 
 
 class NaviBar extends React.Component {
+
 
     render() {
         return (
