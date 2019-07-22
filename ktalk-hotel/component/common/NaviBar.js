@@ -3,6 +3,8 @@ import Link from 'next/link'
 
 const TopBar = props => {
   
+    
+
     const loggout = e => {
         const auth_id = document.getElementById('auth_id') 
 
@@ -16,11 +18,6 @@ const TopBar = props => {
         
     }
     
-    const memberStatus = e => {
-        console.log(props)
-
-    }
-
     return (
         <div>
         <Link href="/main">
@@ -31,15 +28,12 @@ const TopBar = props => {
                 <a > 부재중 아이콘 </a>
             </Link>
         </div>
-        <div>
-                <label> 내 아이디 명 </label>
-                
-        </div>
-        <div>
-            <Link href="/">
-                    <button id ="dd" type="button" onClick={loggout}> 로그아웃 </button>
-            </Link>
-        </div>
+
+            <div>
+                <Link href="/">
+                        <button id ="dd" type="button" onClick={loggout}> 로그아웃 </button>
+                </Link>
+            </div>
         </div>
     )
 
@@ -67,12 +61,27 @@ const LoggedOutView = props => {
 
 class NaviBar extends React.Component {
 
+    componentDidMount() {
+        const checked = localStorage.getItem('checked') === 'true';
+        const id = checked ? localStorage.getItem('saveId') : '';
+        console.log(' 메인 페이지 ', id)
+        
+
+    }
+
+    constructor(props) {
+        super(props)
+        console.log(props);
+    }
 
     render() {
         return (
                 <div> 
                     <TopBar /> 
-                    
+                            <div>
+                <label className="status">  </label>
+                
+                </div>
                     <LoggedOutView />
                 
                 </div>

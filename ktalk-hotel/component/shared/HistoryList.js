@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-const HistoryList = ({ items, displayMemo }) => {
+const HistoryList = ({ items, displayMemo ,SaveDispalyMemo }) => {
     return (
         
         <Fragment>
@@ -21,10 +21,23 @@ const HistoryList = ({ items, displayMemo }) => {
                                         className="waves-effect waves-light delete"
                                     >
                                         메모 확인
-                                </button>
+                                    </button>
                                 ) : (
                                         ''
-                                    )}
+                                    )},
+                                {
+                                    item.memo ? (
+                                        <button
+                                        onClick={() => SaveDispalyMemo(item.idx)}
+                                        className="waves-effect waves-light delete"
+                                    >
+                                        메모 수정 
+                                    </button>
+                                    ) : (
+                                        ''
+                                    )
+                                }
+
                         </td>
                         <td>
                             <button className="button call"> 통화 </button>

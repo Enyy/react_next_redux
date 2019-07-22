@@ -28,10 +28,13 @@ class gusetRoom extends Component {
         this.state = {
             roomsNumber: '',
             status : '',
-            Floor: '',
+            floor: '',
             keyword : '', 
             items : this.props.gusetRoomList.result
         }
+
+
+
     }
     
     getGuestRoomBySearch = async () => {
@@ -72,15 +75,16 @@ class gusetRoom extends Component {
         })
     }
 
-    getCurrencyByRoomSort = async e => {
-        const listType = e.target.value 
+    getCurrencyByRoomSort = async (floor) => {
+   
         let FloorData = {
-            listType : listType
+            listType : floor
         }
-        
-        try {
 
+        try {
+            console.log(" ######### FloorData " , FloorData);
             const _FloorSort = await getGuestRoomFloorSort(FloorData);
+
 
             this.setState({
                 items : _FloorSort.result
@@ -90,8 +94,40 @@ class gusetRoom extends Component {
         }
     }
 
+    SelectFloorType = e => {
+        const { items } = this.state;
+        let roomInfo = {};
+        items.map(item => {
+            roomInfo[item.floor] ? "" : roomInfo[item.floor] = [];
+            roomInfo[item.floor].push(item);
+        })
+        const roomInfoKeys = Object.keys(roomInfo);
+        console.log(roomInfoKeys);
+        this.setState({
+                floor: roomInfoKeys
+        });
+
+        FloorType.addEventListener('click', () => {
+            console.log("roomInfokeys" , FloorType.options[0].value);
+            if (FloorType.options[0].value ==='all') {
+                this.getCurrencyByRoomSort(FloorType.options[FloorType.selectedIndex].value)
+            } else {
+                this.getCurrencyByRoomSort(roomInfoKeys[FloorType.selectedIndex])
+            }
+ 
+            
+        });
+    }
+
+
     render() {
-        const { Floor, items, status} = this.state;
+        const { items , Floor } = this.state;
+        let roomInfo = {};
+        items.map(item => {
+            roomInfo[item.floor] ? "" : roomInfo[item.floor] = [];
+            roomInfo[item.floor].push(item);
+        })
+        const roomInfoKeys = Object.keys(roomInfo);
 
         return (
             <div className="content-container">
@@ -108,16 +144,23 @@ class gusetRoom extends Component {
                             <input type="search" id="RoomSearch" placeholder="객실번호"></input>
                             <button onClick={this.getGuestRoomBySearch}> 검색 </button>
                         </div>
+
                         <div>
-                            <select
+
+                        <select
                                 value={this.state.value}
-                                onChange={this.getCurrencyByRoomSort}
+                                onChange={this.SelectFloorType}
                                 className="FloorType"
-                                id="FloorType">
-                                <option value="all" defaultValue> 층 전체</option>
-                                <option value="2"> 2F </option>
-                                <option value="3"> 3F </option>
-                                <option value="4"> 4F </option>
+                                id="FloorType"
+                                >
+                                 <option key={0} value='all'> 층 전체</option>
+                                {
+                                    roomInfoKeys.map(FloorItem=> {
+                                        return (
+                                            <option key={FloorItem} value={FloorItem}> {FloorItem}</option>
+                                        )
+                                    })
+                                }
                             </select>
                             <br></br>
 
@@ -133,6 +176,9 @@ class gusetRoom extends Component {
         )
     }
 }
+
+
+//                                 
 
 
 export default gusetRoom

@@ -3,12 +3,7 @@ import Link from 'next/link'
 
 class Login extends Component {
 
-    state = {
-            id: '',
-            password: '',
-            checked: '', 
-            isLoggin : false
-    }
+
 
 
     componentDidMount() {
@@ -24,7 +19,14 @@ class Login extends Component {
         this.handlerIDChange = this.handlerIDChange.bind(this);
         this.handlerPwChange = this.handlerPwChange.bind(this);
 
+        this.state = {
+            id: '',
+            password: '',
+            checked: '', 
+            isLoggin : false
+        }
 
+        this.props.children.concat(this.state)
     }
 
 

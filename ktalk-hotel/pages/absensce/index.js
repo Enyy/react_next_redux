@@ -10,7 +10,7 @@ import { getCurrencyBySort,
     getTableHeaderBySort
 } from '../../actions/history'
 
-import { getMemoInfo } from '../../actions/Memo'
+import { getMemoInfo , setMemoInfo} from '../../actions/Memo'
 
 class History extends Component {
 
@@ -72,6 +72,19 @@ class History extends Component {
             </div>`);
     }
 
+    handerMemoInfoSave = async idx => {
+        const memo_title = '통화 메모';
+        const memo = await this.SaveDispalyMemo(idx);
+        const windowObj = window.open('/popup.html', memo_title, 'width=420,height=250');
+        windowObj.document.write(`<div className="popupBox">
+                <div className="popupBoxInner">
+                    <textarea className="popupTitle">${this.state.memo} </textarea>
+                    <button id="save" onClick=${memo}> 저장</button>
+                    <button id="close" onClick="window.close()"> 닫기</button>
+                </div>
+            </div>`);
+    } 
+
     // 여기서 api 호출 후 메모에 데이터 넣으면 됨
     displayMemo = async idx => {
         try {
@@ -81,6 +94,17 @@ class History extends Component {
 
         } catch (err) {
             console.log('err', err)
+        }
+    }
+
+    SaveDispalyMemo = async idx => {
+        let memoInfo = {};
+        try {
+            memoInfo = await setMemoInfo(idx);
+            console.log('memoInfo ' , memoInfo);
+            this.setState({ onMemo: !this.state.onMemo, memo: memoInfo.memo })
+        } catch (error) {
+            console.log('메모 저장 실패 ', error);
         }
     }
 
@@ -101,7 +125,8 @@ class History extends Component {
         console.log("list  ==> ", list)
         let index = 0;
 
-        if (CallType.options[CallType.selectedIndex].value !== 'all') {
+        if (CallType.options[CallType.selectedIndex].value !== 'miss') {
+            index = 3
             CallType.value = CallType.options[index].value
         }
 
@@ -370,16 +395,12 @@ class History extends Component {
         }
     }
 
-    ForwardingTime = async  e => {
-        // 착신 시간 오름차순 내림차순 
-    }
-
     // 객실 정렬 
-    guestRoomSort = async e => {
+    guestRoomSort = e => {
         alert("정렬")
         let sortdata;
         try {
-
+            // asc , desc
             
             const { active } = this.state;
 
@@ -387,35 +408,228 @@ class History extends Component {
                 sortdata = {
                     active: active,
                     option: {
-                        sortType: 'roomNumber',
-                        sort: 'desc'
+                        sortType: 'guest_room_id',
+                        sort: 'asc'
                     }
                 }
                 //sortflag =false;
             // } 
 
             // if (!sortflag)  {
-            //     sortdata = {
-            //         active: active,
-            //         option: {
-            //             sortType: 'room',
-            //             sort: 'desc'
-            //         }
-            //     }
-            //     //sortflag = true;
+                // sortdata = {
+                //     active: active,
+                //     option: {
+                //         sortType: 'room',
+                //         sort: 'desc'
+                //     }
+                // }
+                //sortflag = true;
             // }
 
-            const _dateSort = await getTableHeaderBySort(sortdata)
+            const _dateSort = getTableHeaderBySort(sortdata)
 
-            console.log(_dateSort);
+            console.log("_dateSort", _dateSort);
 
         } catch (error) {
             console.log(`guestRoomSort ${error}`);
         }
     }
+
+    receptionTime = (e) => {
+        let sortdata;
+        try {
+            // asc , desc
+            
+            const { active } = this.state;
+
+            // if (sortflag) {
+                sortdata = {
+                    active: active,
+                    option: {
+                        sortType: 'reception_time',
+                        sort: 'asc'
+                    }
+                }
+                //sortflag =false;
+            // } 
+
+            // if (!sortflag)  {
+                // sortdata = {
+                //     active: active,
+                //     option: {
+                //         sortType: 'room',
+                //         sort: 'desc'
+                //     }
+                // }
+                //sortflag = true;
+            // }
+
+            const _dateSort = getTableHeaderBySort(sortdata)
+
+            console.log("_dateSort", _dateSort);
+
+        } catch (error) {
+            console.log(`guestRoomSort ${error}`);
+        }
+    }
+
+    requestGroupCode = (e) => {
+        let sortdata;
+        try {
+            // asc , desc
+            
+            const { active } = this.state;
+
+            // if (sortflag) {
+                sortdata = {
+                    active: active,
+                    option: {
+                        sortType: 'request_group_code',
+                        sort: 'asc'
+                    }
+                }
+                //sortflag =false;
+            // } 
+
+            // if (!sortflag)  {
+                // sortdata = {
+                //     active: active,
+                //     option: {
+                //         sortType: 'room',
+                //         sort: 'desc'
+                //     }
+                // }
+                //sortflag = true;
+            // }
+
+            const _dateSort = getTableHeaderBySort(sortdata)
+
+            console.log("_dateSort", _dateSort);
+
+        } catch (error) {
+            console.log(`guestRoomSort ${error}`);
+        }
+    }
+
+
+    processGroupCode = (e) => {
+        let sortdata;
+        try {
+            // asc , desc
+            
+            const { active } = this.state;
+
+            // if (sortflag) {
+                sortdata = {
+                    active: active,
+                    option: {
+                        sortType: 'process_group_code',
+                        sort: 'asc'
+                    }
+                }
+                //sortflag =false;
+            // } 
+
+            // if (!sortflag)  {
+                // sortdata = {
+                //     active: active,
+                //     option: {
+                //         sortType: 'room',
+                //         sort: 'desc'
+                //     }
+                // }
+                //sortflag = true;
+            // }
+
+            const _dateSort = getTableHeaderBySort(sortdata)
+
+            console.log("_dateSort", _dateSort);
+
+        } catch (error) {
+            console.log(`guestRoomSort ${error}`);
+        }
+    }
+
+    userIdSort = (e) => {
+        let sortdata;
+        try {
+            // asc , desc
+            
+            const { active } = this.state;
+
+            // if (sortflag) {
+                sortdata = {
+                    active: active,
+                    option: {
+                        sortType: 'user_id',
+                        sort: 'asc'
+                    }
+                }
+                //sortflag =false;
+            // } 
+
+            // if (!sortflag)  {
+                // sortdata = {
+                //     active: active,
+                //     option: {
+                //         sortType: 'room',
+                //         sort: 'desc'
+                //     }
+                // }
+                //sortflag = true;
+            // }
+
+            const _dateSort = getTableHeaderBySort(sortdata)
+
+            console.log("_dateSort", _dateSort);
+
+        } catch (error) {
+            console.log(`guestRoomSort ${error}`);
+        }
+    }
+
+    callTimeSort = (e) => {
+        let sortdata;
+        try {
+            // asc , desc
+            
+            const { active } = this.state;
+
+            // if (sortflag) {
+                sortdata = {
+                    active: active,
+                    option: {
+                        sortType: 'call_time',
+                        sort: 'asc'
+                    }
+                }
+                //sortflag =false;
+            // } 
+
+            // if (!sortflag)  {
+                // sortdata = {
+                //     active: active,
+                //     option: {
+                //         sortType: 'room',
+                //         sort: 'desc'
+                //     }
+                // }
+                //sortflag = true;
+            // }
+
+            const _dateSort = getTableHeaderBySort(sortdata)
+
+            console.log("_dateSort", _dateSort);
+
+        } catch (error) {
+            console.log(`guestRoomSort ${error}`);
+        }
+    }
+
+    
     render() {
 
-        const { onMemo, active, total, items, memo, searchType } = this.state
+        const { active, total, items  } = this.state
         const date = new Date();
         const day = date.getDate();
         const month = date.getMonth() + 1;
@@ -479,7 +693,7 @@ class History extends Component {
                                 <option value="PG"> 부재중 그룹 </option>
                             </select>
                             <select
-                                defaultValue="all"
+                                defaultValue="miss"
                                 value={this.state.value}
                                 onChange={this.getCurrencyBySort}
                                 className="callType"
@@ -508,12 +722,12 @@ class History extends Component {
                                 <thead>
                                     <tr>
                                         <th>NO .</th>
-                                        <th>착/발신 시간</th>
+                                        <th onClick={this.receptionTime}>착/발신 시간</th>
                                         <th onClick={this.guestRoomSort}>객실</th>
-                                        <th>요청부서</th>
-                                        <th>처리부서</th>
-                                        <th>상담사ID</th>
-                                        <th>총 통화 시간</th>
+                                        <th onClick={this.requestGroupCode}>요청부서</th>
+                                        <th onClick={this.processGroupCode}>처리부서</th>
+                                        <th onClick={this.userIdSort}>상담사ID</th>
+                                        <th onClick={this.callTimeSort}>총 통화 시간</th>
                                         <th>메모</th>
                                         <th>통화</th>
                                     </tr>
@@ -526,6 +740,7 @@ class History extends Component {
                                             items={items}
                                             active={active}
                                             displayMemo={this.hendlerClick}
+                                            SaveDispalyMemo={this.handerMemoInfoSave}
                                         />
                                     ) 
                                 }   

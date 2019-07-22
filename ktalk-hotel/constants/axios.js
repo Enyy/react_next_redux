@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const axiosInstance = axios.create({
-    baseURL: 'http://localhost:8000/hotel/v1', 
+    baseURL: 'http://ktgenie.com:8000/hotel/v1', 
     timeout : 3 * 1000
 })
 

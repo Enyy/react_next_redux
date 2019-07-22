@@ -58,9 +58,8 @@ export const getManagementsByGroup = async group => {
         .then(handleSuccess)
         .catch(handleError)
 }
-
+// 통화 정렬 
 export const getCurrencyBySort = async listType => {
-    console.log("리스트 클릭!! ", listType);
 
     let data = {
         auth: { cpId: cpId, auth_key: auth_key },
@@ -69,12 +68,12 @@ export const getCurrencyBySort = async listType => {
             offset: 10 * (listType.active - 1),
             limit: 10,
             sort: 'desc',
+            sortType : '',
             endTime: listType.option.endTime,
             startTime: listType.option.startTime
         }
     }
 
-    console.log("  정렬하자자자자자자자자  ", data)
     return await axiosInstance
         .post('/call/getCallHistoryList', data)
         .then(handleSuccess)
@@ -82,7 +81,7 @@ export const getCurrencyBySort = async listType => {
 }
 
 export const getSearchResultList = async searchType => {
-    console.log(" r ", searchType);
+
     let data
     if (searchType.searchType == '') {
         data = {
@@ -113,7 +112,6 @@ export const getSearchResultList = async searchType => {
 
     }
 
-    console.log("  검색!!! 결과!   ", data)
     return await axiosInstance
         .post('/call/getCallHistoryList', data)
         .then(handleSuccess)
@@ -172,6 +170,7 @@ export const getTableHeaderBySort = async sortType => {
         }
     }
 
+    console.log("헤더 정렬!!!!!!!!!!! ", data);
     return await axiosInstance
         .post('/call/getCallHistoryList', data)
         .then(handleSuccess)

@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react'
 const AbsensceList = ({ items, displayMemo }) => {
-    console.log("1!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " , items);
     return (
 
         <Fragment>
@@ -25,7 +24,19 @@ const AbsensceList = ({ items, displayMemo }) => {
                                 </button>
                                 ) : (
                                         ''
-                                    )}
+                                    )}, 
+                                {
+                                    item.memo ? (
+                                        <button
+                                        onClick={() => SaveDispalyMemo(item.idx)}
+                                        className="waves-effect waves-light delete"
+                                    >
+                                        메모 수정 
+                                    </button>
+                                    ) : (
+                                        ''
+                                    )
+                                }
                             </td>
                             <td>
                                 <button className="button call"> 통화 </button>

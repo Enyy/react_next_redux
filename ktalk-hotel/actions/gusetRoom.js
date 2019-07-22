@@ -33,12 +33,25 @@ export const getGuestRoomSearch = async (search) => {
 }
 
 export const getGuestRoomFloorSort = async (Floor) => {
-    console.log(Floor)
-
+    console.log("Floor ", Floor.listType)
+    let FloorData = '';
+    if (Floor.listType !== 'all') {
+        FloorData = {
+            listType : Floor.listType
+        }
+        console.log("!", Floor.listType)
+    } else {
+        FloorData = {
+            listType : 'all'
+        }
+    }
+        
     let data = {
         auth: { cpId: cpId, auth_key: auth_key },
-        listType: Floor.listType
+        listType: FloorData.listType
     }
+
+    console.log(data);
 
     return await axiosInstance.post('/room/getGuestRoomList', data)
         .then(handleSuccess)
