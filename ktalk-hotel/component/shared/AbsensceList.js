@@ -1,11 +1,12 @@
 import React, { Fragment } from 'react'
 const AbsensceList = ({ items, displayMemo }) => {
+    console.log("1!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " , items);
     return (
 
         <Fragment>
             <tbody>
                 {
-                    items.map(item => (
+                    items.map(item  => (
                         <tr key={item.idx}>
                             <td>{item.idx}</td>
                             <td>{item.reception_time}</td>
@@ -15,17 +16,22 @@ const AbsensceList = ({ items, displayMemo }) => {
                             <td>{item.receiver}</td>
                             <td>{item.call_time}</td>
                             <td>
-                                <button
-                                    onClick={() => displayMemo(item.memo)}
-                                >
-                                    메모장
-                            </button>
+                                {item.memo ? (
+                                    <button
+                                        onClick={() => displayMemo(item.idx)}
+                                        className="waves-effect waves-light delete"
+                                    >
+                                        메모 확인
+                                </button>
+                                ) : (
+                                        ''
+                                    )}
                             </td>
                             <td>
                                 <button className="button call"> 통화 </button>
                             </td>
                         </tr>
-                    ))
+                    ) )
                 }
             </tbody>
         </Fragment>

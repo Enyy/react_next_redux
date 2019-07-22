@@ -12,7 +12,8 @@ export const getMissedList = async () => {
         option: {
             offset: 10 * 0,
             limit: 10,
-            sort: 'desc'
+            sort: 'desc', 
+            startTime : 20190701
         }
     }
 
@@ -20,3 +21,5 @@ export const getMissedList = async () => {
         .post('/call/getCallHistoryList', data)
         .then(handleSuccess)
         .catch(handleError)
+
+}

@@ -4,12 +4,21 @@ import Link from 'next/link'
 const TopBar = props => {
   
     const loggout = e => {
-        const loggout = document.getElementById('dd');
+        const auth_id = document.getElementById('auth_id') 
 
         alert('loggout');
-        if (window.localStorage.getItem('checked')) {
-            console.log(window.localStorage.getItem('checked'))
-        }
+        if (localStorage.getItem('checked')) {
+
+            localStorage.getItem('saveId')
+            console.log( localStorage.getItem("saveId"));
+            console.log(localStorage.getItem('checked'))
+        } 
+        
+    }
+    
+    const memberStatus = e => {
+        console.log(props)
+
     }
 
     return (
@@ -23,7 +32,7 @@ const TopBar = props => {
             </Link>
         </div>
         <div>
-                <label > 내 아이디 명 </label>
+                <label> 내 아이디 명 </label>
                 
         </div>
         <div>
@@ -63,6 +72,7 @@ class NaviBar extends React.Component {
         return (
                 <div> 
                     <TopBar /> 
+                    
                     <LoggedOutView />
                 
                 </div>

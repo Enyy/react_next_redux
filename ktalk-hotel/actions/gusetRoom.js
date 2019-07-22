@@ -30,6 +30,7 @@ export const getGuestRoomSearch = async (search) => {
         .post('/room/getGuestRoomList', data)
         .then(handleSuccess)
         .catch(handleError)
+}
 
 export const getGuestRoomFloorSort = async (Floor) => {
     console.log(Floor)

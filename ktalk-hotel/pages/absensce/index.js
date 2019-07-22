@@ -1,45 +1,90 @@
 import React, { Component } from 'react'
 import AbsensceList from '../../component/shared/AbsensceList';
-import Memo from '../../component/shared/Memo';
-import PagingBox from '../../component/shared/PagingBox';
-import { getMissedList  } from '../../actions/absensce';
-import { getCurrencyBySort, getSearchResultList, getCalendarBySearch, getTableHeaderBySort} from '../../actions/history'
 
-class Absensce extends Component {
+import PagingBox from '../../component/shared/PagingBox';
+import { getMissedList } from '../../actions/absensce'
+import { getCurrencyBySort, 
+    getSearchResultList, 
+    getManagementsByGroup, 
+    getCalendarBySearch,
+    getTableHeaderBySort
+} from '../../actions/history'
+
+import { getMemoInfo } from '../../actions/Memo'
+
+class History extends Component {
 
     static getInitialProps = async e => {
+        let MissList = {};
         try {
+            
+            // let _historyData = {
+            //     option: {
+            //         startTime: prevDates,
+            //         endTime: todays
+            //     }
+            // }
 
-            const missList = await getMissedList();
-        
-            return {
-                missList
-            }
+            MissList = await getMissedList();
+            console.log("1" , MissList)
         } catch (error) {
-            console.log(`getMissedList error `, error)
+            console.log(` getCallHistory  !!!!!!! `, error);
+            if(error) {
+                error.message = <AbsensceList />;
+            }
+        } 
+        return {
+            
+            MissList
         }
     }
 
-    constructor(props) {
-        super(props);
+    state = {
+        onMemo: false, // 메모창을 띄울지 bool
+        active: 1, //선택 page
+        items: this.props.MissList.result, //list item 의 arr
+        total: this.props.MissList.total, //list item 총 수량
+        dataPerPage: 10, // 페이지당 보여줄 수
+        memo: '', // memo text 저장 state
+        option: {
+            sortTime: '',
+            sort: '',
+            startTime: '',
+            endTime: ''
+        },
+        keyword: '',
+        searchType: '',
+        listType: '', // 통화 그룹 정렬
+        groupName: '' // 부서 정렬 
+    }
 
-        this.state = {
-            onMemo: false, // 메모창을 띄울지 bool
-            active: 1, //선택 page
-            items: this.props.missList.result, //list item 의 arr
-            total: this.props.missList.total, //list item 총 수량
-            dataPerPage: 10, // 페이지당 보여줄 수
-            memo: '', // memo text 저장 state
-            option: {
-                startTime: '',
-                endTime: ''
-            },
-            keyword: '',
-            searchType: '',
-            listType: '', // 통화 그룹 정렬
-            groupName: '' // 부서 정렬 
+    hendlerClick = async idx => {
+        const memo_title = '통화 메모 '
+        const memo = await this.displayMemo(idx);
+
+        const windowObj = window.open('/popup', memo_title, 'width=420,height=250');
+        windowObj.document.write(`<div className="popupBox">
+                <div className="popupBoxInner">
+                    <h1 className="popupTitle">${this.state.memo} </h1>
+                    <button id="save" onClick=${memo}> 저장</button>
+                    <button id="close" onClick="window.close()"> 닫기</button>
+                </div>
+            </div>`);
+    }
+
+    // 여기서 api 호출 후 메모에 데이터 넣으면 됨
+    displayMemo = async idx => {
+        try {
+            let res = await getMemoInfo(idx)
+            console.log('res', res)
+            this.setState({ onMemo: !this.state.onMemo, memo: res.memo })
+
+        } catch (err) {
+            console.log('err', err)
         }
     }
+
+
 
     Refresh = async () => {
         alert(" 새로 고침 ");
@@ -47,11 +92,16 @@ class Absensce extends Component {
         const DepartSort = document.getElementById("DepartSort");
         const searchInput = document.getElementById("searchInput");
         const searchType = document.getElementById("searchType");
+        // const prevDate = document.getElementById('prevDate').value.split('-');
+
+        // 새로고침 했을 때, 날짜 현재 날짜로 변경 해야함 
+
         const list = await getMissedList();
+
+        console.log("list  ==> ", list)
         let index = 0;
 
-        if (CallType.options[CallType.selectedIndex].value !== 'miss') {
-            index= 3
+        if (CallType.options[CallType.selectedIndex].value !== 'all') {
             CallType.value = CallType.options[index].value
         }
 
@@ -84,7 +134,7 @@ class Absensce extends Component {
         }
 
         const Today = year + "-" + monthc + "-" + days;
-        const prevDates = year + "-" + monthc + "-" + (days - 7);
+        const prevDates = year + "-" + monthc + "-" + (days - 9);
 
         document.getElementById('today').value = Today;
         document.getElementById('prevDate').value = prevDates;
@@ -93,36 +143,15 @@ class Absensce extends Component {
             total: list.total,
             items: list.result,
             listType: '',
-            groupName: ''
+            groupName: '', 
+            option : {
+                startTime : prevDates , 
+                endTime : Today
+            }
         })
 
 
     }
-
-    hendlerClick = e => {
-        const memo_title = '통화 메모 '
-        const popup = window.open('/popup', memo_title, 'width=420,height=250');
-
-    }
-
-    closeMemo = () => {
-        this.setState({ onMemo: !this.state.onMemo })
-    }
-
-    // 여기서 api 호출 후 메모에 데이터 넣으면 됨
-    displayMemo = async idx => {
-        try {
-            let res = await getMemoInfo(idx)
-            console.log('res', res)
-            this.setState({ onMemo: !this.state.onMemo, memo: res.data.memo })
-
-
-        } catch (err) {
-            console.log('err', err)
-        }
-    }
-
-
 
     handleChangePage = async pageNo => {
         const { searchValue, option } = this.state
@@ -143,13 +172,21 @@ class Absensce extends Component {
         }
     }
 
+
     handlePage = pageNo => {
+        
+        console.log("1 #### " , pageNo);
+
         this.setState(
             {
                 active: pageNo
+            },
+            () => {
+                this.handleChangePage(this.state.active)
             }
         )
     }
+
 
     prevPage = pageNo => {
         const { active } = this.state
@@ -167,9 +204,31 @@ class Absensce extends Component {
         })
     }
 
+    historyByGroup = async e => {
+        try {
+            const { active } = this.state
+            console.log(this.state);
+            console.log(" groupName ##############", e.target.value);
+            let groupName = e.value.target
+
+            alert("부서그룹 " , groupName);
+
+            let groupData = {
+                active: active,
+                group: groupValue
+            }
+            // console.log('groupData', groupData)
+            const res = await getManagementsByGroup(groupData)
+
+            console.log('res:::::', res)
+        } catch (err) {
+            // console.log("error", err);
+        }
+    }
+
     getCurrencyBySort = async e => {
         try {
-            const { active, option } = this.state
+            const { active } = this.state
 
             let listValue = e.target.value
             const prevDate = document.getElementById('prevDate').value.split('-');
@@ -178,12 +237,12 @@ class Absensce extends Component {
             const today = document.getElementById('today').value.split('-');
             const todays = today[0] + today[1] + today[2];
 
-            console.log("3. getCurrencyBySort --> ", option);
+            console.log("3. getCurrencyBySort --> " , option);
             let ListData = {
                 active: active,
-                listType: listValue,
-                option: {
-                    startTime: prevDates,
+                listType: listValue, 
+                option : {
+                    startTime: prevDates, 
                     endTime: todays
                 }
 
@@ -193,8 +252,8 @@ class Absensce extends Component {
             console.log('res:::::', _list_sort)
 
             this.setState({
-                option: {
-                    startTime: prevDates,
+                option : {
+                    startTime: prevDates, 
                     endTime: todays
                 },
                 total: _list_sort.total,
@@ -208,7 +267,7 @@ class Absensce extends Component {
 
     getSearchTypeByValue = async e => {
         try {
-            const { active, searchType, option } = this.state
+            const { active, searchType , option } = this.state
 
             let searchWord = searchInput.value.trim()
             console.log("option", option);
@@ -229,8 +288,8 @@ class Absensce extends Component {
             let searchData = {
                 searchType: searchType,
                 active: active,
-                keyword: searchWord,
-                option: {
+                keyword: searchWord, 
+                option : {
                     startTime: prevDates,
                     endTime: todays
                 }
@@ -264,7 +323,7 @@ class Absensce extends Component {
                     // 검색 
                     break;
                 default:
-
+                    
                     break;
             }
 
@@ -275,8 +334,9 @@ class Absensce extends Component {
     }
 
     Calendarcheck = async e => {
+        let _dateSearch= {}
+        const { active  } = this.state
         try {
-            const { active } = this.state
 
             const today = document.getElementById('today').value.split('-');
             const todays = today[0] + today[1] + today[2];
@@ -285,26 +345,28 @@ class Absensce extends Component {
             const prevDates = prevDate[0] + prevDate[1] + prevDate[2];
 
             let CalendarData = {
-                option: {
+                option : {
                     startTime: prevDates,
                     endTime: todays
-                },
-                active: active
+                }, 
+                active : active
             }
-
-            const _dateSearch = await getCalendarBySearch(CalendarData)
+            
+            _dateSearch = await getCalendarBySearch(CalendarData)
 
             this.setState({
                 option: {
                     startTime: prevDates,
                     endTime: todays
-                },
+                }, 
                 total: _dateSearch.total,
                 items: _dateSearch.result
-            })
-        } catch (err) {
+            });
 
-            console.log("error", err);
+        } catch (err) {
+            if (err.message) {
+                console.log(`결과 값 없음`);
+            }
         }
     }
 
@@ -318,18 +380,18 @@ class Absensce extends Component {
         let sortdata;
         try {
 
-
+            
             const { active } = this.state;
 
             // if (sortflag) {
-            sortdata = {
-                active: active,
-                option: {
-                    sortType: 'roomNumber',
-                    sort: 'desc'
+                sortdata = {
+                    active: active,
+                    option: {
+                        sortType: 'roomNumber',
+                        sort: 'desc'
+                    }
                 }
-            }
-            //sortflag =false;
+                //sortflag =false;
             // } 
 
             // if (!sortflag)  {
@@ -351,35 +413,34 @@ class Absensce extends Component {
             console.log(`guestRoomSort ${error}`);
         }
     }
-
     render() {
-        const { onMemo, active, total, items, memo, error } = this.state
-        const bool = true
 
+        const { onMemo, active, total, items, memo, searchType } = this.state
         const date = new Date();
         const day = date.getDate();
         const month = date.getMonth() + 1;
         const year = date.getFullYear();
         let monthc, days
+
         if (month < 10) {
             monthc = "0" + month;
         }
+
         if (day < 10) {
-            days = "0" + day
+            days = "0" + day;
         } else {
             days = day
-        }
+        } 
 
         const today = year + "-" + monthc + "-" + days;
-        const prevDate = year + "-" + monthc + "-" + (days - 7);
-
+        const prevDate = year + "-" + monthc + "-" + (days - 9);
 
         return (
 
             <div className="content-container">
                 <div className="content-box">
                     <div className="title">
-                        <h2> 통화 내역 </h2>
+                        <h2> 부재중 통화 내역 </h2>
                         <div className="title-line">
                             <button id="Refresh" onClick={this.Refresh} >  새로 고침 </button>
                         </div>
@@ -387,7 +448,7 @@ class Absensce extends Component {
                     <div className="content">
                         <div className="sideBar">
                             <label> 달력 </label>
-                            <input type="date" id="prevDate" onChange={this.state.value} defaultValue={prevDate} />  ~ <input type="date" id="today" onChange={this.state.value} defaultValue={today} />
+                            <input type="date" id="prevDate" onChange={this.state.value} defaultValue={prevDate} />  ~ <input type="date" id="today" onChange={this.state.value} defaultValue={today}/>
                             <button onClick={this.Calendarcheck}> 조회</button>
 
                             <select
@@ -395,7 +456,7 @@ class Absensce extends Component {
                                 value={this.state.value}
                                 onChange={this.inputsearchType}
                                 name="searchType" id="searchType">
-                                <option value="room"> 객실</option>
+                                <option value="room" > 객실</option>
                                 <option value="user"> 상담사</option>
                             </select>
 
@@ -405,27 +466,28 @@ class Absensce extends Component {
                         </div>
                         <div className="search input">
                             <select
+                                defaultValue="all"
                                 value={this.state.value}
                                 onChange={this.historyByGroup}
                                 className="sort"
                                 id="DepartSort">
-                                <option value="all" defaultValue> 부서 그룹 </option>
+                                <option value="all" > 부서 그룹 </option>
                                 <option value="FR"> 프론트(FR)</option>
                                 <option value="RV"> 예약문의(RV)</option>
                                 <option value="RS"> 룸서비스(RS)</option>
                                 <option value="HK"> 하우스키퍼(HK)</option>
-                                <option > 부재중 그룹 </option>
+                                <option value="PG"> 부재중 그룹 </option>
                             </select>
                             <select
-                                defaultValue="miss"
-                                value = {this.state.value}
+                                defaultValue="all"
+                                value={this.state.value}
                                 onChange={this.getCurrencyBySort}
                                 className="callType"
                                 id="CallType">
                                 <option value="all" > 전체</option>
                                 <option value="out"> 발신 </option>
                                 <option value="in"> 수신</option>
-                                <option value="miss" > 부재중</option>
+                                <option value="miss"> 부재중</option>
                             </select>
                             <br></br>
 
@@ -447,7 +509,7 @@ class Absensce extends Component {
                                     <tr>
                                         <th>NO .</th>
                                         <th>착/발신 시간</th>
-                                        <th>객실</th>
+                                        <th onClick={this.guestRoomSort}>객실</th>
                                         <th>요청부서</th>
                                         <th>처리부서</th>
                                         <th>상담사ID</th>
@@ -456,12 +518,18 @@ class Absensce extends Component {
                                         <th>통화</th>
                                     </tr>
                                 </thead>
-                                <AbsensceList
-                                    onHistroy={bool}
-                                    items={items}
-                                    active={active}
-                                    displayMemo={this.hendlerClick}
-                                />
+
+                                { 
+                                    items && (
+
+                                        <AbsensceList
+                                            items={items}
+                                            active={active}
+                                            displayMemo={this.hendlerClick}
+                                        />
+                                    ) 
+                                }   
+
                             </table>
                         </div>
                         <PagingBox
@@ -470,14 +538,13 @@ class Absensce extends Component {
                             activeProps={active}
                             nextPage={this.nextPage}
                             prevPage={this.prevPage}
-                            hanldePage={this.handlePage}
+                            handlePage={this.handlePage}
                         />
                     </div>
                 </div>
-                {onMemo ? <Memo displayMemo={this.displayMemo} memo={memo} /> : ''}
             </div>
         )
     }
 }
 
-export default Absensce
+export default History

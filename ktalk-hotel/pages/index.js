@@ -3,111 +3,128 @@ import Link from 'next/link'
 
 class Login extends Component {
 
-    
     state = {
-        id: '',
-        password: '',
-        checked: ''
+            id: '',
+            password: '',
+            checked: '', 
+            isLoggin : false
     }
 
 
+    componentDidMount() {
+        const checked = localStorage.getItem('checked') === 'true';
+        const id = checked ? localStorage.getItem('saveId') : '';
+        console.log('1', id)
+        this.setState({ id , checked });
+
+    }
+
+    constructor(props) {
+        super(props)
+        this.handlerIDChange = this.handlerIDChange.bind(this);
+        this.handlerPwChange = this.handlerPwChange.bind(this);
+
+
+    }
+
+
+    
     handleSubmit = (e) => {
+        const { id , password}  =this.state ;
 
         const authId = document.getElementById('auth_id');
         const authPw = document.getElementById('auth_pw');
 
-        const textId = document.getElementById('textId')
-        const defaults = document.getElementById('defaults')
-        const textPw = document.getElementById('textPw')
-
-        console.log("a", authId);
-        checkId ? window.localStorage.setItem("saveId", authId) : window.localStorage.removeItem("saveId");
-
-
-        console.log(checkId);
-        console.log("b", window.localStorage.getItem("saveId"));
-        // 아이디는 있는데, 비밀번호는 없는 경우, 비밀번호 채워줘 
-        // 아이디는 없고, 비밀번호가 있는 경우, 아이디를 채워줘 
-        // 두개의 값이 모두 비워져있으면, 아이디 또는 비밀번호를 잘못 입력하셨습니다. 다시 확인해주세요. 알림창 뜸. 
-        // 내용이 채워
-        if(window.localStorage.getItem("checked")) {
-            authId.defaultValue = window.localStorage.getItem("saveId")
-            console.log("authId.defaultValue " , authId.value);
-        }
-
-        if (!authId.value) {
-            textId.style.display = 'block';
-
-            if (authId.defaultValue) {
-                textId.style.display = 'none';
-            }
-        } 
-        if (!authPw.value) {
-            console.log("authPW 빈칸이야." ,  authPw);
-            textPw.style.display = 'block';
-
-            if (authPw.value) {
-                textPw.style.display = 'none';
-            }
-        }
-
-        if (!authId.value && !authPw.value) {
-            defaults.style.display = 'block';
-            if (authId.value && authPw.value) {
-                defaults.style.display = 'none';
-            }
-        }
-
-        if (authId.value && authPw.value) {
+        if (authId & authPw) {
            //alert("a");
-            console.log(this.state.isLoggin);
-
-            setState({ 
+            this.setState({ 
                 id: this.state.id,
-                password: authPw,
-                checked:  window.localStorage.getItem("checked")
+                password: this.state.password,
+                checked:  this.this.state.checked,
+                isLoggin : true
             });
 
             console.log("checked Check" , this.state.checked);
-        
         }
-        
     }
+
+
 
     handleChange = (e) => {
         const { checked } = e.target;
 
         console.log("1", checked);
 
-        this.setState({ checked: true });
-
         if (checked) {
-            window.localStorage.setItem("checked", true);
-            console.log("12", checked);
+            this.setState({ checked: true });
+            localStorage.setItem("checked", true);
         } else if (!checked) {
             console.log("13", checked);
             this.setState({ checked: false });
-            window.localStorage.setItem("checked", false)
+            localStorage.setItem("checked", false);
+            localStorage.removeItem('saveId');
         }
 
     };
 
+    handlerError = (e) => {
+        
+        console.log(" 빈칸 채워주세요");
+        const authId = document.getElementById('authId').value;
+        const authPw = document.getElementById('authPw').value;
+        const textId = document.getElementById('textId')
+        const defaults = document.getElementById('defaults')
+        const textPw = document.getElementById('textPw')
+
+
+        if (!authId) {
+            textId.style.display = 'block';
+
+            if (authId.value) {
+                textId.style.display = 'none';
+            }
+        } 
+        if (!authPw)  {
+            console.log("authPW 빈칸이야." ,  this.state.password);
+            textPw.style.display = 'block';
+
+            if (authPw) {
+                textPw.style.display = 'none';  
+            }
+        }
+
+        if (!authId && !authPw ) {
+            defaults.style.display = 'block';
+            if (authId && authPw ) {
+                defaults.style.display = 'none';
+            }
+        }
+
+        this.setState({
+            isLoggin : true
+        })
+
+    }
+
     handlerIDChange = e => {
+        localStorage.setItem('saveId' , e.target.value )
         this.setState({
             id: e.target.value
         });
     }
 
+
     handlerPwChange = e => {
+
         this.setState({
             password: e.target.value
         });
     }
 
-    render() {
+    
 
-        const  {isLoggin , checked }  = this.state
-        console.log("checked ::: " , checked)
+    render() {
+        const  {isLoggin , checked , id }  = this.state;
 
         return (
             <form >
@@ -116,43 +133,34 @@ class Login extends Component {
                 <label className="sr-only"> id   </label>
                 <input type="text" 
                         onChange={this.handlerIDChange} 
-                        id="auth_id"
+                        id="authId"
                         className="form-control"
                         placeholder="id"
-                        required /><br></br>
+                        value ={this.state.id}
+                        /><br></br>
                     <label id="textId" style={{display:'none'}} > 아이디를 입력해주세요. </label><br></br>
 
-                <label className="sr-only">Password      </label>
-                <input type="password" onChange={this.handlerPwChange} id="auth_pw" className="form-control" placeholder="password" /><br></br>
+                <label className="sr-only">Password</label>
+                <input type="password" onChange={this.handlerPwChange} id="authPw" className="form-control" placeholder="password" /><br></br>
                 <label id="textPw" style={{display:'none'}}> 비밀번호를 입력해주세요. </label> <br></br>
                 <label id="defaults" style={{display:'none'}}> 아이디 또는 비밀번호를 잘못 입력하셨습니다. 다시 확인해주세요. </label> <br></br>
 
                 <input className="input"
                     id="checkId"
                     type="checkbox"
-                    checked={this.state.checked}
+                    checked={checked}
                     onChange={this.handleChange}
                     
-                />                 <label className="sr-only" id="sr-only"> 아이디 저장 </label>
-                <div> 
-                    {
-                        isLoggin === true ? (
-                                <Link href="/">
-                                    <button className="button" onClick={this.handleSubmit}> sss로그인 </button>
-                            </Link>
-                        ) : (
-                            <Link href="/main">
-                                    <button className="button"> 로그인 </button>
-                            </Link>
-
-                        )
-                    }
-                
+                />              
+                <label className="sr-only" id="sr-only"> 아이디 저장 </label>
+                <div > 
+                    <Link href="/main">
+                        <button className="button" onClick={this.handleSubmit} > 로그인 </button>
+                    </Link>
                 </div>
             </form>
         )
     }
-
 }
 
 export default Login

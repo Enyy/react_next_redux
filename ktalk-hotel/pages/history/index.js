@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import HistoryList from '../../component/shared/HistoryList';
-import Memo from '../../component/shared/Memo';
+
 import PagingBox from '../../component/shared/PagingBox';
 import { getCallHistory, getCurrencyBySort, 
     getSearchResultList, 
@@ -140,7 +140,11 @@ class History extends Component {
             total: list.total,
             items: list.result,
             listType: '',
-            groupName: ''
+            groupName: '', 
+            option : {
+                startTime : prevDates , 
+                endTime : Today
+            }
         })
 
 
